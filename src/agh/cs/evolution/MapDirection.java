@@ -1,81 +1,40 @@
 package agh.cs.evolution;
 
 public enum MapDirection {
-    NORTH, EAST, SOUTH, WEST;
+    N(0, new Vector2d(0, 1)),
+    NE(1, new Vector2d(1, 1)),
+    E(2, new Vector2d(1, 0)),
+    SE(3, new Vector2d(1, -1)),
+    S(4, new Vector2d(0, -1)),
+    SW(5, new Vector2d(-1, -1)),
+    W(6, new Vector2d(-1, 0)),
+    NW(7, new Vector2d(-1, 1));
+
+    private static final MapDirection[] BY_INDEX;
+
+    static {
+        MapDirection[] vals = values();
+        BY_INDEX = new MapDirection[vals.length];
+        for (MapDirection d : vals) {
+            BY_INDEX[d.directionIndex] = d;
+        }
+    }
+
+    public final Vector2d forwardVector;
+    private final int directionIndex;
+
+    MapDirection(int directionIndex, final Vector2d forwardVector) {
+        this.directionIndex = directionIndex;
+        this.forwardVector = forwardVector;
+    }
+
+    MapDirection rotateRight(int amount) {
+        assert 0 <= amount && amount < BY_INDEX.length;
+        return BY_INDEX[(this.directionIndex + amount) % BY_INDEX.length];
+    }
 
     @Override
     public String toString() {
-        switch (this) {
-            case NORTH:
-                return "Północ";
-            case EAST:
-                return "Wschód";
-            case SOUTH:
-                return "Południe";
-            case WEST:
-                return "Zachód";
-            default:
-                throw new IllegalStateException("Invalid MapDirection enum value.");
-        }
-    }
-
-    public char getDirectionArrow() {
-        switch (this) {
-            case NORTH:
-                return '^';
-            case EAST:
-                return '>';
-            case SOUTH:
-                return 'v';
-            case WEST:
-                return '<';
-            default:
-                throw new IllegalStateException("Invalid MapDirection enum value.");
-        }
-    }
-
-    public MapDirection next() {
-        switch (this) {
-            case NORTH:
-                return EAST;
-            case EAST:
-                return SOUTH;
-            case SOUTH:
-                return WEST;
-            case WEST:
-                return NORTH;
-            default:
-                throw new IllegalStateException("Invalid MapDirection enum value.");
-        }
-    }
-
-    public MapDirection previous() {
-        switch (this) {
-            case NORTH:
-                return WEST;
-            case EAST:
-                return NORTH;
-            case SOUTH:
-                return EAST;
-            case WEST:
-                return SOUTH;
-            default:
-                throw new IllegalStateException("Invalid MapDirection enum value.");
-        }
-    }
-
-    public Vector2d toUnitVector() {
-        switch (this) {
-            case NORTH:
-                return new Vector2d(0, 1);
-            case EAST:
-                return new Vector2d(1, 0);
-            case SOUTH:
-                return new Vector2d(0, -1);
-            case WEST:
-                return new Vector2d(-1, 0);
-            default:
-                throw new IllegalStateException("Invalid MapDirection enum value.");
-        }
+        return name();
     }
 }
