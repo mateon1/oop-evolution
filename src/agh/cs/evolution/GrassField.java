@@ -30,7 +30,7 @@ public class GrassField extends AbstractWorldMap {
             int y = grassRand.nextInt(grassBound);
             Vector2d pos = new Vector2d(x, y);
             if (!this.isOccupied(pos)) {
-                redo = (grassMap.put(pos, new Grass(pos)) != null);
+                redo = (grassMap.put(pos, new Grass()) != null);
             }
         } while (redo);
         // OooOOooo... - possibly an infinite loop in case of bad randomness!

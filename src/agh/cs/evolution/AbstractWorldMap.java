@@ -53,7 +53,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
                     + animal.getPosition().toString() + ", because the position is invalid.");
         animals.add(animal);
         animalHashMap.put(animal.getPosition(), animal);
-        animal.addObserver(this);
         return true;
     }
 
