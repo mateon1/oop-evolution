@@ -3,36 +3,34 @@ package agh.cs.evolution;
 import agh.cs.evolution.util.Vector2d;
 
 public enum MapDirection {
-    N(0, new Vector2d(0, 1)),
-    NE(1, new Vector2d(1, 1)),
-    E(2, new Vector2d(1, 0)),
-    SE(3, new Vector2d(1, -1)),
-    S(4, new Vector2d(0, -1)),
-    SW(5, new Vector2d(-1, -1)),
-    W(6, new Vector2d(-1, 0)),
-    NW(7, new Vector2d(-1, 1));
+    N(new Vector2d(0, 1)),
+    NE(new Vector2d(1, 1)),
+    E(new Vector2d(1, 0)),
+    SE(new Vector2d(1, -1)),
+    S(new Vector2d(0, -1)),
+    SW(new Vector2d(-1, -1)),
+    W(new Vector2d(-1, 0)),
+    NW(new Vector2d(-1, 1));
 
     private static final MapDirection[] BY_INDEX;
 
     static {
-        MapDirection[] vals = values();
-        BY_INDEX = new MapDirection[vals.length];
-        for (MapDirection d : vals) {
-            BY_INDEX[d.directionIndex] = d;
+        MapDirection[] dirs = values();
+        BY_INDEX = new MapDirection[dirs.length];
+        for (MapDirection d : dirs) {
+            BY_INDEX[d.ordinal()] = d;
         }
     }
 
     public final Vector2d forwardVector;
-    private final int directionIndex;
 
-    MapDirection(int directionIndex, final Vector2d forwardVector) {
-        this.directionIndex = directionIndex;
+    MapDirection(final Vector2d forwardVector) {
         this.forwardVector = forwardVector;
     }
 
     MapDirection rotateRight(int amount) {
         assert 0 <= amount && amount < BY_INDEX.length;
-        return BY_INDEX[(this.directionIndex + amount) % BY_INDEX.length];
+        return BY_INDEX[(ordinal() + amount) % BY_INDEX.length];
     }
 
     @Override

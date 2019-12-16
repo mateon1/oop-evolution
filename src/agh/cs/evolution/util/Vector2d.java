@@ -64,4 +64,12 @@ public class Vector2d {
     public Vector2d opposite() {
         return new Vector2d(-this.x, -this.y);
     }
+
+    public Vector2d wrapBounds(Vector2d upperRight) {
+        return new Vector2d(this.x % upperRight.x, this.y % upperRight.y);
+    }
+
+    public Vector2d wrapBounds(Vector2d lowerLeft, Vector2d upperRight) {
+        return this.subtract(lowerLeft).wrapBounds(upperRight.subtract(lowerLeft)).add(lowerLeft);
+    }
 }

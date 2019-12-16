@@ -1,19 +1,38 @@
 package agh.cs.evolution;
 
-import agh.cs.evolution.util.Vector2d;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Random;
 
 public class WorldMap {
-    protected ArrayList<Animal> animals;
-    protected HashMap<Vector2d, Animal> animalHashMap;
+    private boolean[][] grassField;
+    private ArrayList<Animal> animals;
 
-    protected Random animalRng;
+    private SimParameters simParams;
 
-    protected WorldMap() {
+    private Random rng;
+    private Random animalRng;
+
+    public WorldMap(SimParameters params, long rngSeed) {
+        assert params.jungleSize.precedes(params.mapSize);
+        simParams = params;
+
         animals = new ArrayList<>();
-        animalHashMap = new HashMap<>();
+        grassField = new boolean[params.mapSize.x][params.mapSize.y];
+
+        rng = new Random(rngSeed);
+        animalRng = new Random(rng.nextLong());
+    }
+
+    public void tick() {
+        // Movement
+        for (Animal a : animals) {
+            a.move(simParams.mapSize);
+        }
+        // Eat grass
+        // TODO
+        // Mate
+        // TODO
+        // Grow grass
+        // TODO
     }
 }
