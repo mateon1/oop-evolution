@@ -1,4 +1,4 @@
-package agh.cs.evolution;
+package agh.cs.evolution.util;
 
 public class Vector2d {
     public final int x;

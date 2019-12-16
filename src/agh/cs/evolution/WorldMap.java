@@ -1,5 +1,7 @@
 package agh.cs.evolution;
 
+import agh.cs.evolution.util.Vector2d;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;

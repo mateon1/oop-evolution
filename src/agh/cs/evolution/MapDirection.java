@@ -1,5 +1,7 @@
 package agh.cs.evolution;
 
+import agh.cs.evolution.util.Vector2d;
+
 public enum MapDirection {
     N(0, new Vector2d(0, 1)),
     NE(1, new Vector2d(1, 1)),
