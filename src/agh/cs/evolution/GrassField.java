@@ -9,7 +9,6 @@ public class GrassField extends AbstractWorldMap {
     private HashMap<Vector2d, Grass> grassMap = new HashMap<>();
 
     private int grassBound;
-    private DynamicMapBoundary mapBoundary = new DynamicMapBoundary();
     private Random grassRand = new Random(); // XXX: What seed?
 
     public GrassField(int grassCount) {
@@ -32,7 +31,6 @@ public class GrassField extends AbstractWorldMap {
             Vector2d pos = new Vector2d(x, y);
             if (!this.isOccupied(pos)) {
                 redo = (grassMap.put(pos, new Grass(pos)) != null);
-                mapBoundary.addPosition(pos);
             }
         } while (redo);
         // OooOOooo... - possibly an infinite loop in case of bad randomness!
@@ -54,8 +52,6 @@ public class GrassField extends AbstractWorldMap {
 
     @Override
     public boolean place(Animal animal) {
-        mapBoundary.addPosition(animal.getPosition());
-        animal.addObserver(this.mapBoundary);
         return super.place(animal);
     }
 
