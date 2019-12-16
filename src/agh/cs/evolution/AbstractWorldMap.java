@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObserver {
+public abstract class AbstractWorldMap implements IWorldMap {
     protected ArrayList<Animal> animals;
     protected HashMap<Vector2d, Animal> animalHashMap;
 
@@ -86,7 +86,6 @@ public abstract class AbstractWorldMap implements IWorldMap, IPositionChangeObse
         return animalHashMap.get(position);
     }
 
-    @Override
     public void positionChanged(Vector2d oldPos, Vector2d newPos) {
         System.out.println("pos change: " + oldPos.toString() + " -> " + newPos.toString());
         animalHashMap.put(newPos, animalHashMap.remove(oldPos));
