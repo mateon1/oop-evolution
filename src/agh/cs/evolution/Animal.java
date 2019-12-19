@@ -26,10 +26,9 @@ public class Animal {
         return energy;
     }
 
-    public int energyChange(int delta) {
+    public void energyChange(int delta) {
         // delta can be positive or negative
         this.energy += delta;
-        return this.energy;
     }
 
     public void tick(Vector2d bounds) {
