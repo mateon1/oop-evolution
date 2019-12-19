@@ -8,16 +8,37 @@ public class Animal {
     private final Random rng;
     private MapDirection direction = MapDirection.N;
     private Vector2d position;
+    private int energy;
     private final Genome genome;
 
-    public Animal(Random rng, Genome genome, Vector2d pos) {
+    public Animal(Random rng, Genome genome, Vector2d pos, int startEnergy) {
         this.rng = rng;
         this.genome = genome;
         this.position = pos;
+        this.energy = startEnergy;
     }
 
-    public void move(Vector2d bounds) {
+    public Vector2d getPosition() {
+        return position;
+    }
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public int energyChange(int delta) {
+        // delta can be positive or negative
+        this.energy += delta;
+        return this.energy;
+    }
+
+    public void tick(Vector2d bounds) {
         this.direction = this.direction.rotateRight(genome.pick(rng));
         this.position = this.position.add(this.direction.forwardVector).wrapBounds(bounds);
+        // The world map controls eating, energy, etc.
+    }
+
+    public Genome getGenes() {
+        return genome;
     }
 }
