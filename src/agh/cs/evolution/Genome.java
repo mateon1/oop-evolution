@@ -11,10 +11,13 @@ public class Genome {
     public Genome(Random initializationRng) {
         genes = new byte[GENE_COUNT];
 
-        for (int i = 0; i < GENE_COUNT; i++) {
+        // A buffer of genes to ensure that there always exists at least one of each gene.
+        for (int i = 0; i < GENE_VALUES; i++) {
+            genes[i] = (byte) i;
+        }
+        for (int i = GENE_VALUES; i < GENE_COUNT; i++) {
             genes[i] = (byte) initializationRng.nextInt(GENE_VALUES);
         }
-        // FIXME: Ensure the genome is valid, i.e. has at least one of each gene
     }
 
     private Genome(byte[] genes) {
@@ -43,8 +46,8 @@ public class Genome {
             genes2 = this.genes;
         }
 
-        int j = rng.nextInt(GENE_COUNT + 1);
-        int k = rng.nextInt(GENE_COUNT + 1); // can be == 0 and == GENE_COUNT
+        int j = rng.nextInt(GENE_COUNT - GENE_VALUES + 1) + GENE_VALUES;
+        int k = rng.nextInt(GENE_COUNT - GENE_VALUES + 1) + GENE_VALUES; // can be == GENE_VALUES and == GENE_COUNT
         if (j > k) {
             int tmp = j;
             j = k;
@@ -54,8 +57,6 @@ public class Genome {
         System.arraycopy(genes1, 0, new_genes, 0, j);
         System.arraycopy(genes2, j, new_genes, j, k - j);
         System.arraycopy(genes1, k, new_genes, k, GENE_COUNT - k);
-
-        // TODO: Check that there exists at least one of each type of gene and fix genome if not
 
         return new Genome(new_genes);
     }
