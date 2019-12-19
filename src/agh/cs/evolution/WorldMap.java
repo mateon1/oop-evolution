@@ -112,7 +112,27 @@ public class WorldMap {
             }
             // Do not track animals with best energy anymore, the loop is about to end.
 
-            Animal child = new Animal(animalRng, a1.getGenes().crossover(a2.getGenes(), rng), position, childEnergy);
+            ArrayList<Vector2d> neighboringPositions = new ArrayList<>();
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    if (x == 0 && y == 0) continue;
+                    neighboringPositions.add(new Vector2d(position.x + x, position.y + y));
+                }
+            }
+            Collections.shuffle(neighboringPositions, rng);
+
+            Vector2d childPosition = position;
+            for (Vector2d p : neighboringPositions) {
+                if (pos2Animals.containsKey(p)) continue;
+                childPosition = p;
+                break;
+            }
+
+            Animal child = new Animal(
+                    animalRng,
+                    a1.getGenes().crossover(a2.getGenes(), rng),
+                    childPosition,
+                    childEnergy);
             animals.add(child);
         }
 
@@ -170,7 +190,6 @@ public class WorldMap {
             }
             if (!freeCells.isEmpty()) {
                 Vector2d growCell = freeCells.get(rng.nextInt(freeCells.size()));
-
                 grassField[growCell.x][growCell.y] = true;
             }
         }
@@ -189,5 +208,12 @@ public class WorldMap {
                 grassField[growCell.x][growCell.y] = true;
             }
         }
+    }
+
+    void visualize() {
+        // Return to top of screen, should prevent text flickering
+        System.out.println("\u001b[H");
+
+
     }
 }
