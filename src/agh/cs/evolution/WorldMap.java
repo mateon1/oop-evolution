@@ -24,6 +24,16 @@ public class WorldMap {
         animalRng = new Random(rng.nextLong());
     }
 
+    public void createAnimal() {
+        Genome genes = new Genome(rng);
+        Vector2d pos = new Vector2d(rng.nextInt(simParams.mapSize.x), rng.nextInt(simParams.mapSize.y));
+        createAnimal(pos, genes);
+    }
+
+    public void createAnimal(Vector2d position, Genome genes) {
+        animals.add(new Animal(animalRng, genes, position, simParams.startEnergy));
+    }
+
     public void tick() {
         // Movement
         HashMap<Vector2d, ArrayList<Animal>> pos2Animals = new HashMap<>();

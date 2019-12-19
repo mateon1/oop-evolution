@@ -66,7 +66,9 @@ public class Vector2d {
     }
 
     public Vector2d wrapBounds(Vector2d upperRight) {
-        return new Vector2d(this.x % upperRight.x, this.y % upperRight.y);
+        return new Vector2d(
+                (this.x % upperRight.x + upperRight.x) % upperRight.x,
+                (this.y % upperRight.y + upperRight.y) % upperRight.y);
     }
 
     public Vector2d wrapBounds(Vector2d lowerLeft, Vector2d upperRight) {
