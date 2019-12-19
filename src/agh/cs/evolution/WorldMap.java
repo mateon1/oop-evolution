@@ -116,7 +116,9 @@ public class WorldMap {
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
                     if (x == 0 && y == 0) continue;
-                    neighboringPositions.add(new Vector2d(position.x + x, position.y + y));
+                    neighboringPositions.add(
+                            new Vector2d(position.x + x, position.y + y)
+                                    .wrapBounds(simParams.mapSize));
                 }
             }
             Collections.shuffle(neighboringPositions, rng);
@@ -214,6 +216,13 @@ public class WorldMap {
         // Return to top of screen, should prevent text flickering
         System.out.println("\u001b[H");
 
-
+        for (int y = 0; y < simParams.mapSize.y; y++) {
+            for (int x = 0; x < simParams.mapSize.x; x++) {
+                char c = grassField[x][y] ? ',' : ' ';
+                System.out.print(c);
+            }
+            System.out.println();
+        }
+        System.out.println("Animal count: " + this.animals.size() + "   ");
     }
 }
