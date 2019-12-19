@@ -34,6 +34,11 @@ public class Genome {
         return genes[rng.nextInt(GENE_COUNT)];
     }
 
+    // Utility method for random number generation
+    private int random_range(Random rng, int low, int high) {
+        return rng.nextInt(high - low) + low;
+    }
+
     public Genome crossover(Genome other, Random rng) {
         byte[] new_genes = new byte[GENE_COUNT];
         byte[] genes1;
@@ -46,9 +51,11 @@ public class Genome {
             genes2 = this.genes;
         }
 
-        int j = rng.nextInt(GENE_COUNT - GENE_VALUES + 1) + GENE_VALUES;
-        int k = rng.nextInt(GENE_COUNT - GENE_VALUES + 1) + GENE_VALUES; // can be == GENE_VALUES and == GENE_COUNT
-        if (j > k) {
+        int j = random_range(rng, GENE_VALUES + 1, GENE_COUNT - 1);
+        int k = random_range(rng, GENE_VALUES + 1, GENE_COUNT - 2); // cannot be == GENE_VALUES and == GENE_COUNT
+        if (k >= j)
+            k++; // ensure the numbers are distinct
+        else {
             int tmp = j;
             j = k;
             k = tmp;
