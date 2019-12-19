@@ -118,6 +118,66 @@ public class WorldMap {
     }
 
     private void growGrass() {
-        // TODO
+        boolean grownInJungle = false;
+        boolean grownInPlains = false;
+
+        // 16 initial random growing attempts
+        for (int i = 0; i < 16; i++) {
+            if (!grownInJungle) {
+                int x = rng.nextInt(simParams.jungleSize.x);
+                int y = rng.nextInt(simParams.jungleSize.y);
+
+                if (!grassField[x][y]) {
+                    grassField[x][y] = true;
+                    grownInJungle = true;
+                }
+            }
+
+            int x = rng.nextInt(simParams.mapSize.x);
+            int y = rng.nextInt(simParams.mapSize.y);
+
+            if (new Vector2d(x, y).precedes(simParams.jungleSize)) {
+                if (!grownInJungle) {
+                    if (grassField[x][y]) continue;
+                    grassField[x][y] = true;
+                    grownInJungle = true;
+                }
+            } else {
+                if (!grownInPlains) {
+                    if (grassField[x][y]) continue;
+                    grassField[x][y] = true;
+                    grownInPlains = true;
+                }
+            }
+        }
+
+        if (!grownInJungle) {
+            ArrayList<Vector2d> freeCells = new ArrayList<>();
+            for (int x = 0; x < simParams.jungleSize.x; x++) {
+                for (int y = 0; y < simParams.jungleSize.y; y++) {
+                    if (!grassField[x][y]) freeCells.add(new Vector2d(x, y));
+                }
+            }
+            if (!freeCells.isEmpty()) {
+                Vector2d growCell = freeCells.get(rng.nextInt(freeCells.size()));
+
+                grassField[growCell.x][growCell.y] = true;
+            }
+        }
+
+        if (!grownInPlains) {
+            ArrayList<Vector2d> freeCells = new ArrayList<>();
+            for (int x = 0; x < simParams.mapSize.x; x++) {
+                for (int y = 0; y < simParams.mapSize.y; y++) {
+                    Vector2d pos = new Vector2d(x, y);
+                    if (pos.precedes(simParams.jungleSize)) continue;
+                    if (!grassField[x][y]) freeCells.add(pos);
+                }
+            }
+            if (!freeCells.isEmpty()) {
+                Vector2d growCell = freeCells.get(rng.nextInt(freeCells.size()));
+                grassField[growCell.x][growCell.y] = true;
+            }
+        }
     }
 }
