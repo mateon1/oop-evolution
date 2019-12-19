@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class Animal {
     private final Random rng;
-    private MapDirection direction = MapDirection.N;
+    private MapDirection direction;
     private Vector2d position;
     private int energy;
     private final Genome genome;
@@ -16,6 +16,7 @@ public class Animal {
         this.genome = genome;
         this.position = pos;
         this.energy = startEnergy;
+        this.direction = MapDirection.N.rotateRight(rng.nextInt(8));
     }
 
     public Vector2d getPosition() {
