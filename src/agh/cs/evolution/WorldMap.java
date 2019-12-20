@@ -34,25 +34,32 @@ public class WorldMap {
         animals.add(new Animal(animalRng, genes, position, simParams.startEnergy));
     }
 
+    private HashMap<Vector2d, ArrayList<Animal>> getAnimalMap() {
+        HashMap<Vector2d, ArrayList<Animal>> animalCells = new HashMap<>();
+        for (Animal a : animals) {
+            Vector2d pos = a.getPosition();
+            if (!animalCells.containsKey(pos))
+                animalCells.put(pos, new ArrayList<>());
+            animalCells.get(pos).add(a);
+        }
+        for (Map.Entry<Vector2d, ArrayList<Animal>> cell : animalCells.entrySet()) {
+            cell.getValue().sort(Comparator.comparingInt(Animal::getEnergy));
+        }
+        return animalCells;
+    }
+
     public void tick() {
         // Movement
-        HashMap<Vector2d, ArrayList<Animal>> pos2Animals = new HashMap<>();
         for (Animal a : animals) {
             a.tick(simParams.mapSize);
             a.energyChange(-simParams.moveEnergy);
-            Vector2d new_pos = a.getPosition();
-            if (!pos2Animals.containsKey(new_pos))
-                pos2Animals.put(new_pos, new ArrayList<>());
-            pos2Animals.get(new_pos).add(a);
         }
 
         // Handle each animal cell: Eat grass, mate, or die
-        for (Map.Entry<Vector2d, ArrayList<Animal>> cell : pos2Animals.entrySet()) {
+        HashMap<Vector2d, ArrayList<Animal>> animalMap = getAnimalMap();
+        for (Map.Entry<Vector2d, ArrayList<Animal>> cell : animalMap.entrySet()) {
             Vector2d position = cell.getKey();
             ArrayList<Animal> cellAnimals = cell.getValue();
-            if (cellAnimals.isEmpty()) continue;
-
-            cellAnimals.sort(Comparator.comparingInt(Animal::getEnergy));
 
             // Track indices of animals with best energy
             int bestEnergy = cellAnimals.get(cellAnimals.size() - 1).getEnergy();
@@ -86,31 +93,30 @@ public class WorldMap {
             // Mating
             if (cellAnimals.size() < 2) continue;
 
-            Animal a1;
-            Animal a2;
+            Animal a1 = cellAnimals.get(cellAnimals.size() - 1);
+            Animal a2 = cellAnimals.get(cellAnimals.size() - 2);
             int childEnergy = 0;
-            if (numBestAnimals == 1) {
-                a1 = cellAnimals.get(cellAnimals.size() - 1);
-                a2 = cellAnimals.get(cellAnimals.size() - 2);
-
-                childEnergy += a1.getEnergy() / 4;
-                childEnergy += a2.getEnergy() / 4;
-                a1.energyChange(-a1.getEnergy() / 4);
-                a2.energyChange(-a2.getEnergy() / 4);
-            } else {
+            if (numBestAnimals > 2) {
                 int i = rng.nextInt(numBestAnimals), j = rng.nextInt(numBestAnimals - 1);
-                if (j >= i) j++;
+                if (j >= i) j++; // ensure indices are distinct
                 a1 = cellAnimals.get(indexOfFirstBest + i);
                 a2 = cellAnimals.get(indexOfFirstBest + j);
-
                 assert a1.getEnergy() == bestEnergy;
                 assert a2.getEnergy() == bestEnergy;
-
-                childEnergy = bestEnergy / 4 * 2; // Not the same as bestEnergy / 2 due to rounding
-                a1.energyChange(-bestEnergy / 4);
-                a2.energyChange(-bestEnergy / 4);
             }
-            // Do not track animals with best energy anymore, the loop is about to end.
+
+            // Don't mate if either animal has insufficient energy
+            if (a1.getEnergy() < simParams.startEnergy / 2) continue;
+            if (a2.getEnergy() < simParams.startEnergy / 2) continue;
+
+            int energyDelta = a1.getEnergy() / 4;
+            a1.energyChange(-energyDelta);
+            childEnergy += energyDelta;
+
+            energyDelta = a2.getEnergy() / 4;
+            a2.energyChange(-energyDelta);
+            childEnergy += energyDelta;
+
 
             ArrayList<Vector2d> neighboringPositions = new ArrayList<>();
             for (int x = -1; x <= 1; x++) {
@@ -125,7 +131,7 @@ public class WorldMap {
 
             Vector2d childPosition = position;
             for (Vector2d p : neighboringPositions) {
-                if (pos2Animals.containsKey(p)) continue;
+                if (animalMap.containsKey(p)) continue;
                 childPosition = p;
                 break;
             }
