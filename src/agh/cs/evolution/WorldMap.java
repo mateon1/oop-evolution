@@ -159,62 +159,63 @@ public class WorldMap {
         boolean grownInJungle = false;
         boolean grownInPlains = false;
 
+        Set<Vector2d> animalSpots = getAnimalMap().keySet();
+
         // 16 initial random growing attempts
         for (int i = 0; i < 16; i++) {
-            if (!grownInJungle) {
-                int x = rng.nextInt(simParams.jungleSize.x);
-                int y = rng.nextInt(simParams.jungleSize.y);
-
-                if (!grassField[x][y]) {
-                    grassField[x][y] = true;
-                    grownInJungle = true;
-                }
+            int width = simParams.mapSize.x;
+            int height = simParams.mapSize.y;
+            if (grownInPlains && !grownInJungle) {
+                width = simParams.jungleSize.x;
+                height = simParams.jungleSize.y;
             }
 
-            int x = rng.nextInt(simParams.mapSize.x);
-            int y = rng.nextInt(simParams.mapSize.y);
+            int x = rng.nextInt(width);
+            int y = rng.nextInt(height);
+            Vector2d pos = new Vector2d(x, y);
+            if (grassField[x][y] || animalSpots.contains(pos))
+                continue;
 
-            if (new Vector2d(x, y).precedes(simParams.jungleSize)) {
+            if (pos.precedes(simParams.jungleSize)) {
                 if (!grownInJungle) {
-                    if (grassField[x][y]) continue;
                     grassField[x][y] = true;
                     grownInJungle = true;
                 }
             } else {
                 if (!grownInPlains) {
-                    if (grassField[x][y]) continue;
                     grassField[x][y] = true;
                     grownInPlains = true;
                 }
             }
         }
 
-        if (!grownInJungle) {
-            ArrayList<Vector2d> freeCells = new ArrayList<>();
-            for (int x = 0; x < simParams.jungleSize.x; x++) {
-                for (int y = 0; y < simParams.jungleSize.y; y++) {
-                    if (!grassField[x][y]) freeCells.add(new Vector2d(x, y));
+        if (grownInJungle && grownInPlains) return;
+
+        // Go through all free spots to generate next grass spot
+        ArrayList<Vector2d> freeCells = new ArrayList<>();
+        for (int x = 0; x < simParams.mapSize.x; x++) {
+            for (int y = 0; y < simParams.mapSize.y; y++) {
+                if (!grassField[x][y] && !animalSpots.contains(new Vector2d(x, y))) {
+                    freeCells.add(new Vector2d(x, y));
                 }
-            }
-            if (!freeCells.isEmpty()) {
-                Vector2d growCell = freeCells.get(rng.nextInt(freeCells.size()));
-                grassField[growCell.x][growCell.y] = true;
             }
         }
+        Collections.shuffle(freeCells, rng);
 
-        if (!grownInPlains) {
-            ArrayList<Vector2d> freeCells = new ArrayList<>();
-            for (int x = 0; x < simParams.mapSize.x; x++) {
-                for (int y = 0; y < simParams.mapSize.y; y++) {
-                    Vector2d pos = new Vector2d(x, y);
-                    if (pos.precedes(simParams.jungleSize)) continue;
-                    if (!grassField[x][y]) freeCells.add(pos);
+        for (Vector2d pos : freeCells) {
+            if (pos.precedes(simParams.jungleSize)) {
+                if (!grownInJungle) {
+                    grownInJungle = true;
+                    grassField[pos.x][pos.y] = true;
+                }
+            } else {
+                if (!grownInPlains) {
+                    grownInPlains = true;
+                    grassField[pos.x][pos.y] = true;
                 }
             }
-            if (!freeCells.isEmpty()) {
-                Vector2d growCell = freeCells.get(rng.nextInt(freeCells.size()));
-                grassField[growCell.x][growCell.y] = true;
-            }
+
+            if (grownInJungle && grownInPlains) return;
         }
     }
 
