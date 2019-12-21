@@ -1,8 +1,12 @@
 package agh.cs.evolution;
 
+import org.json.simple.parser.ParseException;
+
 public class Main {
-    public static void main(String[] args) {
-        SimParameters params = new SimParameters();
+    public static void main(String[] args) throws ParseException {
+        SimParameters params = SimParameters.fromJson(
+                "{\"mapSize\": [100, 30], \"jungleSize\": [10, 10], \"startEnergy\": 20, \"plantEnergy\": 25, \"moveEnergy\": 1}"
+        );
         int seed = 0;
 
         WorldMap w = new WorldMap(params, seed);
@@ -16,8 +20,16 @@ public class Main {
             w.createAnimal();
 
         System.out.println("Running the world!");
-        for (int i = 0; i < 100000; i++)
+        for (int i = 0; i < 100000; i++) {
             w.tick();
+            if (i % 10 == 0) {
+                w.visualize();
+                try {
+                    Thread.sleep(10, 0);
+                } catch (InterruptedException ignored) {
+                }
+            }
+        }
 
         System.out.println("Done!");
     }
