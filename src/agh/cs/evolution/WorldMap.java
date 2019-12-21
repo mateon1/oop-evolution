@@ -238,10 +238,18 @@ public class WorldMap {
             System.out.print('-');
         System.out.println('+');
 
+        HashMap<Vector2d, ArrayList<Animal>> animalMap = getAnimalMap();
+
         for (int y = 0; y < simParams.mapSize.y; y++) {
             System.out.print('|');
             for (int x = 0; x < simParams.mapSize.x; x++) {
                 char c = grassField[x][y] ? ',' : ' ';
+                Vector2d pos = new Vector2d(x, y);
+                if (animalMap.containsKey(pos)) {
+                    int count = animalMap.get(pos).size();
+                    if (count < 10) c = " o23456789".charAt(count);
+                    else c = '#';
+                }
                 System.out.print(c);
             }
             System.out.println('|');
@@ -252,7 +260,7 @@ public class WorldMap {
             System.out.print('-');
         System.out.println('+');
 
-        int totalEnergy = this.animals.stream().map(Animal::getEnergy).reduce(0, (a, b) -> a + b);
+        int totalEnergy = this.animals.stream().map(Animal::getEnergy).reduce(0, Integer::sum);
 
         System.out.println("=== STATISTICS ===");
         System.out.printf("Animal count:   %4d    \n", this.animals.size());
