@@ -93,9 +93,9 @@ public class WorldMap {
             // Mating
             if (cellAnimals.size() < 2) continue;
 
+            // Choose parent animals
             Animal a1 = cellAnimals.get(cellAnimals.size() - 1);
             Animal a2 = cellAnimals.get(cellAnimals.size() - 2);
-            int childEnergy = 0;
             if (numBestAnimals > 2) {
                 int i = rng.nextInt(numBestAnimals), j = rng.nextInt(numBestAnimals - 1);
                 if (j >= i) j++; // ensure indices are distinct
@@ -109,6 +109,8 @@ public class WorldMap {
             if (a1.getEnergy() < simParams.startEnergy / 2) continue;
             if (a2.getEnergy() < simParams.startEnergy / 2) continue;
 
+            int childEnergy = 0;
+
             int energyDelta = a1.getEnergy() / 4;
             a1.energyChange(-energyDelta);
             childEnergy += energyDelta;
@@ -117,23 +119,20 @@ public class WorldMap {
             a2.energyChange(-energyDelta);
             childEnergy += energyDelta;
 
-
             ArrayList<Vector2d> neighboringPositions = new ArrayList<>();
             for (int x = -1; x <= 1; x++) {
                 for (int y = -1; y <= 1; y++) {
-                    if (x == 0 && y == 0) continue;
-                    neighboringPositions.add(
-                            new Vector2d(position.x + x, position.y + y)
-                                    .wrapBounds(simParams.mapSize));
+                    Vector2d pos = position.add(new Vector2d(x, y)).wrapBounds(simParams.mapSize);
+                    if (!animalMap.containsKey(pos))
+                        neighboringPositions.add(pos);
                 }
             }
-            Collections.shuffle(neighboringPositions, rng);
 
-            Vector2d childPosition = position;
-            for (Vector2d p : neighboringPositions) {
-                if (animalMap.containsKey(p)) continue;
-                childPosition = p;
-                break;
+            Vector2d childPosition;
+            if (neighboringPositions.size() == 0) {
+                childPosition = position;
+            } else {
+                childPosition = neighboringPositions.get(rng.nextInt(neighboringPositions.size()));
             }
 
             Animal child = new Animal(
