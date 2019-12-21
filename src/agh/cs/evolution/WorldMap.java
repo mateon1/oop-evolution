@@ -223,13 +223,25 @@ public class WorldMap {
         // Return to top of screen, should prevent text flickering
         System.out.println("\u001b[H");
 
+        System.out.print('+');
+        for (int i = 0; i < simParams.mapSize.x; i++)
+            System.out.print('-');
+        System.out.println('+');
+
         for (int y = 0; y < simParams.mapSize.y; y++) {
+            System.out.print('|');
             for (int x = 0; x < simParams.mapSize.x; x++) {
                 char c = grassField[x][y] ? ',' : ' ';
                 System.out.print(c);
             }
-            System.out.println();
+            System.out.println('|');
         }
+
+        System.out.print('+');
+        for (int i = 0; i < simParams.mapSize.x; i++)
+            System.out.print('-');
+        System.out.println('+');
+
         System.out.println("Animal count: " + this.animals.size() + "   ");
     }
 }
