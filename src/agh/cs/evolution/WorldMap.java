@@ -48,6 +48,17 @@ public class WorldMap {
         return animalCells;
     }
 
+    private int countGrass() {
+        int grass = 0;
+        for (int x = 0; x < simParams.mapSize.x; x++) {
+            for (int y = 0; y < simParams.mapSize.y; y++) {
+                if (grassField[x][y])
+                    grass++;
+            }
+        }
+        return grass;
+    }
+
     public void tick() {
         // Movement
         for (Animal a : animals) {
@@ -242,5 +253,6 @@ public class WorldMap {
         System.out.println('+');
 
         System.out.println("Animal count: " + this.animals.size() + "   ");
+        System.out.println("Grass count: " + countGrass() + "   ");
     }
 }
