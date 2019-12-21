@@ -1,0 +1,9 @@
+{
+    "mapSize": [100, 30],
+    "jungleSize": [10, 10],
+    "startEnergy": 50,
+    "plantEnergy": 25,
+    "moveEnergy": 1,
+    "startAnimals": 25,
+    "grassTurns": 50
+}
