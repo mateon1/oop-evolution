@@ -252,7 +252,11 @@ public class WorldMap {
             System.out.print('-');
         System.out.println('+');
 
-        System.out.println("Animal count: " + this.animals.size() + "   ");
-        System.out.println("Grass count: " + countGrass() + "   ");
+        int totalEnergy = this.animals.stream().map(Animal::getEnergy).reduce(0, (a, b) -> a + b);
+
+        System.out.println("=== STATISTICS ===");
+        System.out.printf("Animal count:   %4d    \n", this.animals.size());
+        System.out.printf("Average energy: %7.2f \n", (double) totalEnergy / this.animals.size());
+        System.out.printf("Grass count:    %4d    \n", countGrass());
     }
 }

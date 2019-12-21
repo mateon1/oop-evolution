@@ -6,8 +6,8 @@ public class Main {
     public static void main(String[] args) throws ParseException {
         SimParameters params = SimParameters.fromJson(
                 "{\"mapSize\": [100, 30], \"jungleSize\": [10, 10],"
-                        + " \"startEnergy\": 20, \"plantEnergy\": 25, \"moveEnergy\": 1,"
-                        + " \"startAnimals\": 20, \"grassTurns\": 50}"
+                        + " \"startEnergy\": 50, \"plantEnergy\": 25, \"moveEnergy\": 1,"
+                        + " \"startAnimals\": 25, \"grassTurns\": 50}"
         );
         int seed = 0;
 
