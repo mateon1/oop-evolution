@@ -15,9 +15,11 @@ public class SimParameters {
     public final int startEnergy;
     public final int plantEnergy;
     public final int moveEnergy;
+    public final int startAnimals;
+    public final int grassTurns;
 
     public SimParameters() {
-        this(new Vector2d(100, 30), new Vector2d(10, 10), 20, 25, 1);
+        this(new Vector2d(100, 30), new Vector2d(10, 10), 20, 25, 1, 20, 50);
     }
 
     public SimParameters(
@@ -25,7 +27,9 @@ public class SimParameters {
             Vector2d jungleSize,
             int startEnergy,
             int plantEnergy,
-            int moveEnergy) {
+            int moveEnergy,
+            int startAnimals,
+            int grassTurns) {
         assert jungleSize.precedes(mapSize);
 
         this.mapSize = mapSize;
@@ -33,6 +37,8 @@ public class SimParameters {
         this.startEnergy = startEnergy;
         this.plantEnergy = plantEnergy;
         this.moveEnergy = moveEnergy;
+        this.startAnimals = startAnimals;
+        this.grassTurns = grassTurns;
     }
 
     public static SimParameters fromJson(String json) throws ParseException {
@@ -52,6 +58,8 @@ public class SimParameters {
         Integer startEnergy = null;
         Integer plantEnergy = null;
         Integer moveEnergy = null;
+        Integer startAnimals = null;
+        int grassTurns = 0;
 
         Set<Map.Entry<String, Object>> entrySet = config.entrySet();
         for (Map.Entry<String, Object> e : entrySet) {
@@ -59,7 +67,7 @@ public class SimParameters {
             Object value = e.getValue();
             switch (key) {
                 case "mapSize":
-                case "jungleSize":
+                case "jungleSize": {
                     if (!(value instanceof JSONArray)) {
                         throw new IllegalArgumentException("Map and area size must be specified as a list of two positive integers, [width, height]");
                     }
@@ -82,9 +90,10 @@ public class SimParameters {
                         jungleSize = bounds;
                     }
                     break;
+                }
                 case "startEnergy":
                 case "moveEnergy":
-                case "plantEnergy":
+                case "plantEnergy": {
                     if (!(value instanceof Long) || ((Long) value) > Integer.MAX_VALUE || ((Long) value) < Integer.MIN_VALUE) {
                         throw new IllegalArgumentException("Energy values must be specified as integers");
                     }
@@ -97,13 +106,28 @@ public class SimParameters {
                         plantEnergy = numericValue.intValue();
                     }
                     break;
-                default:
+                }
+                case "startAnimals":
+                case "grassTurns": {
+                    if (!(value instanceof Long) || ((Long) value) > Integer.MAX_VALUE || ((Long) value) < 0) {
+                        throw new IllegalArgumentException("Counting values must be non-negative integers");
+                    }
+                    Long numericValue = (Long) value;
+                    if (key.equals("startAnimals")) {
+                        startAnimals = numericValue.intValue();
+                    } else {
+                        grassTurns = numericValue.intValue();
+                    }
+                    break;
+                }
+                default: {
                     String message = "Unexpected config key \"" + key + "\"";
                     if (strict) {
                         throw new IllegalArgumentException(message);
                     } else {
                         System.err.println("Warning: " + message);
                     }
+                }
             }
         }
         if (mapSize == null) throw new IllegalArgumentException("Missing configuration key: mapSize");
@@ -111,7 +135,8 @@ public class SimParameters {
         if (startEnergy == null) throw new IllegalArgumentException("Missing configuration key: startEnergy");
         if (moveEnergy == null) throw new IllegalArgumentException("Missing configuration key: moveEnergy");
         if (plantEnergy == null) throw new IllegalArgumentException("Missing configuration key: plantEnergy");
+        if (startAnimals == null) throw new IllegalArgumentException("Missing configuration key: startAnimals");
 
-        return new SimParameters(mapSize, jungleSize, startEnergy, plantEnergy, moveEnergy);
+        return new SimParameters(mapSize, jungleSize, startEnergy, plantEnergy, moveEnergy, startAnimals, grassTurns);
     }
 }
